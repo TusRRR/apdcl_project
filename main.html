@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Leaflet CSS and JS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APDCL Dashboard</title>
+  <style>
+    .filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: #f5faff;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 64, 128, 0.1);
+}
+
+.dropdown-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dropdown-group label {
+  font-weight: 600;
+  color: #004080;
+  font-size: 14px;
+}
+
+.custom-dropdown {
+  padding: 10px 14px;
+  border: 2px solid #004080;
+  border-radius: 8px;
+  background: linear-gradient(to right, #ffffff, #f0f8ff);
+  color: #004080;
+  font-size: 14px;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='orange' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 180px;
+}
+
+.custom-dropdown:focus {
+  border-color: orange;
+  box-shadow: 0 0 5px rgba(255, 165, 0, 0.5);
+  outline: none;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.action-btn {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  background: linear-gradient(to right, #004080, #0073e6);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.action-btn:hover {
+  background: linear-gradient(to right, #ff8000, #ffaa00);
+}
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #ffffff;
+      color: #004080;
+      margin: 0;
+      padding: 20px;
+    }
+    header {
+      background-color: #004080;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 24px;
+    }
+    .filters {
+      margin: 20px 0;
+    }
+    select, button {
+      margin: 5px;
+      padding: 10px;
+      border: 1px solid #004080;
+      border-radius: 5px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #004080;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #cce6ff;
+    }
+    input[type="text"] {
+      width: 100%;
+      border: 1px solid #ccc;
+      padding: 5px;
+    }
+    .save-btn, .edit-btn {
+      background-color: #004080;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  
+
+  <header>APDCL Power Asset Dashboard</header>
+
+  <div class="filters">
+  <div class="dropdown-group">
+    <label for="company">Company</label>
+    <select id="company" class="custom-dropdown">
+      <option value="">Select Company</option>
+      <option value="APDCL">APDCL</option>
+    </select>
+  </div>
+
+  <div class="dropdown-group">
+    <label for="circle">Circle</label>
+    <select id="circle" class="custom-dropdown"></select>
+  </div>
+
+  <div class="dropdown-group">
+    <label for="district">District</label>
+    <select id="district" class="custom-dropdown"></select>
+  </div>
+
+  <div class="dropdown-group">
+    <label for="subdivision">Subdivision</label>
+    <select id="subdivision" class="custom-dropdown"></select>
+  </div>
+
+  <div class="dropdown-group">
+    <label for="component">Component</label>
+    <select id="component" class="custom-dropdown">
+      <option value="">Select Component</option>
+      <option value="DTR">DTR</option>
+      <option value="LT">LT Overhead Line</option>
+      <option value="HT">HT Overhead Line</option>
+    </select>
+  </div>
+
+  <button class="action-btn" onclick="filterAssets()">Filter</button>
+  <button class="action-btn" onclick="resetFilters()">Reset Filters</button>
+</div>
+
+  <table id="assetTable" style="display:none">
+    <thead>
+      <tr id="tableHeader"></tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+  <br>
+
+  <div id="mapSection" style="display:none; margin-top: 20px;">
+  <button onclick="closeMap()" style="margin-bottom: 10px;">Close Map</button>
+  <div id="map" style="height: 400px;"></div>
+</div>
+
+
+  <script>
+    
+    const circleMap = {
+      'APDCL': ['Lower Assam', 'Central Assam', 'Upper Assam']
+    };
+
+    const districtMap = {
+      'Lower Assam': ['Guwahati', 'Nalbari'],
+      'Central Assam': ['Tezpur', 'Nowgaon'],
+      'Upper Assam': ['Jorhat', 'Lakhimpur']
+    };
+
+    const subdivisionMap = {
+      'Guwahati': ['Guwahati Urban', 'Guwahati Rural'],
+      'Nalbari': ['Nalbari 1', 'Nalbari 2'],
+      'Tezpur': ['Tezpur North', 'Tezpur South'],
+      'Nowgaon': ['Nowgaon East', 'Nowgaon West'],
+      'Jorhat': ['Jorhat Urban', 'Jorhat Rural'],
+      'Lakhimpur': ['Lakhimpur 1', 'Lakhimpur 2']
+    };
+
+    const defaultValues = {
+      DTR: ['11kV', 'DTR-12345', '2021'],
+      LT: ['440V', '150A', '3.5km'],
+      HT: ['33kV', '300A', '12km']
+    };
+
+    const attributes = {
+      DTR: ['Operating Voltage', 'Serial No', 'Year of Repair'],
+      LT: ['Voltage Level', 'Maximum Load Fed', 'Length of the Line'],
+      HT: ['Voltage Level', 'Maximum Load Fed', 'Length of the Line']
+    };
+
+    function populateDropdown(id, items) {
+      const dropdown = document.getElementById(id);
+      dropdown.innerHTML = `<option value="">Select ${id.charAt(0).toUpperCase() + id.slice(1)}</option>`;
+      items.forEach(item => {
+        const option = document.createElement('option');
+        option.value = item;
+        option.textContent = item;
+        dropdown.appendChild(option);
+      });
+    }
+
+    document.getElementById('company').addEventListener('change', function () {
+      const circles = circleMap[this.value] || [];
+      populateDropdown('circle', circles);
+      populateDropdown('district', []);
+      populateDropdown('subdivision', []);
+    });
+
+    document.getElementById('circle').addEventListener('change', function () {
+      const districts = districtMap[this.value] || [];
+      populateDropdown('district', districts);
+      populateDropdown('subdivision', []);
+    });
+
+    document.getElementById('district').addEventListener('change', function () {
+      const subdivisions = subdivisionMap[this.value] || [];
+      populateDropdown('subdivision', subdivisions);
+    });
+
+    function filterAssets() {
+      const component = document.getElementById('component').value;
+      const company = document.getElementById('company').value;
+      const circle = document.getElementById('circle').value;
+      const district = document.getElementById('district').value;
+      const subdivision = document.getElementById('subdivision').value;
+      if (!component || !company || !circle || !district || !subdivision) return;
+
+      const attr = attributes[component];
+      const tableHeader = document.getElementById('tableHeader');
+      const tableBody = document.getElementById('tableBody');
+
+      tableHeader.innerHTML = `<th>Component</th>` + attr.map(a => `<th>${a}</th>`).join('') + `<th>Action</th>`;
+      
+
+      fetch(`http://localhost:3000/get-attributes?component=${component}&company=${company}&circle=${circle}&district=${district}&subdivision=${subdivision}`)
+        .then(res => res.json())
+        .then(data => {
+          const values = data.attributes.length ? data.attributes : defaultValues[component];
+          let row = `<tr><td>${component}</td>`;
+          for (let i = 0; i < attr.length; i++) {
+            row += `<td><input type="text" value="${values[i] || ''}" disabled></td>`;
+          }
+          row += `<td><button class="edit-btn" onclick="editRow(this)">Edit</button></td></tr>`;
+          tableBody.innerHTML = row;
+          document.getElementById('assetTable').style.display = 'table';
+         showMapForSubdivision(subdivision);
+
+
+        })
+        .catch(() => alert('Error loading data from server'));
+        
+    }
+    
+    
+    function showMapForSubdivision(subdivision) {
+  const locations = componentLocationMap[subdivision];
+  if (!locations || locations.length === 0) {
+    alert('No location data for this subdivision.');
+    return;
+  }
+
+  document.getElementById('mapSection').style.display = 'block';
+
+  if (!map) {
+    map = L.map('map').setView([locations[0].lat, locations[0].lng], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18,
+    }).addTo(map);
+  }
+
+  const bounds = [];
+
+  map.eachLayer((layer) => {
+    if (layer instanceof L.Marker) map.removeLayer(layer);
+  });
+
+  locations.forEach(loc => {
+    
+    const marker = L.marker([loc.lat, loc.lng]).addTo(map)
+      .bindPopup(`${loc.type} in ${subdivision}`);
+    bounds.push([loc.lat, loc.lng]);
+  });
+
+  if (bounds.length > 1) {
+    map.fitBounds(bounds);
+  } else {
+    map.setView(bounds[0], 13);
+  }
+}
+
+    
+let map;
+
+function showMap(lat, lng) {
+  document.getElementById('map').style.display = 'block';
+  
+  if (!map) {
+    map = L.map('map').setView([lat, lng], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+  } else {
+    map.setView([lat, lng], 13);
+  }
+
+  L.marker([lat, lng]).addTo(map)
+    .bindPopup('Asset Location')
+    .openPopup();
+}
+function closeMap() {
+  document.getElementById('mapSection').style.display = 'none';
+}
+
+    function editRow(btn) {
+      const row = btn.parentNode.parentNode;
+      const inputs = row.querySelectorAll('input');
+      const isEditing = btn.textContent === 'Edit';
+
+      inputs.forEach(input => input.disabled = !isEditing);
+      btn.textContent = isEditing ? 'Save' : 'Edit';
+
+      if (!isEditing) {
+        const component = document.getElementById('component').value;
+        const company = document.getElementById('company').value;
+        const circle = document.getElementById('circle').value;
+        const district = document.getElementById('district').value;
+        const subdivision = document.getElementById('subdivision').value;
+        const attributes = Array.from(inputs).map(input => input.value);
+
+        fetch('http://localhost:3000/save-attributes', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ component, attributes, company, circle, district, subdivision })
+        })
+          .then(() => alert('Updated successfully'))
+          .catch(() => alert('Failed to save data'));
+      }
+    }
+
+    function resetFilters() {
+      document.getElementById('company').value = '';
+      populateDropdown('circle', []);
+      populateDropdown('district', []);
+      populateDropdown('subdivision', []);
+      document.getElementById('component').value = '';
+      document.getElementById('assetTable').style.display = 'none';
+    }
+    
+    const componentLocationMap = {
+  "Guwahati Urban": [
+    { type: "DTR", lat: 26.18, lng: 91.74 },
+    { type: "HT", lat: 26.24, lng: 91.35 },
+    { type: "LT", lat: 26.29, lng: 91.45 }
+  ],
+  "Guwahati Rural": [
+    { type: "DTR", lat: 26.13, lng: 91.88 },
+    { type: "HT", lat: 26.19, lng: 91.75 },
+    { type: "LT", lat: 26.17, lng: 91.79 }
+  ],
+  "Nalbari 1": [
+    { type: "DTR", lat: 26.43, lng: 91.44 },
+    { type: "HT", lat: 26.45, lng: 91.45 },
+    { type: "LT", lat: 26.27, lng: 91.72 }
+  ],
+  "Nalbari 2": [
+    { type: "DTR", lat: 26.446, lng: 91.424 },
+    { type: "HT", lat: 26.56, lng: 91.22 },
+    { type: "LT", lat: 26.17, lng: 91.62 }
+  ],
+  "Lakhimpur 1": [
+    { type: "DTR", lat: 27.169, lng: 94.022 },
+    { type: "HT", lat: 26.9, lng: 91.78 },
+    { type: "LT", lat: 26.07, lng: 91.72 }
+  ],
+
+  "Lakhimpur 2": [
+    { type: "DTR", lat: 27.69, lng: 94.02 },
+    { type: "HT", lat: 26.45, lng: 91.413 },
+    { type: "LT", lat: 26.12, lng: 91.18 }
+  ],
+  "Jorhat Urban": [
+    { type: "DTR", lat: 26.18, lng: 91.74 },
+    { type: "HT", lat: 26.19, lng: 91.75 },
+    { type: "LT", lat: 26.17, lng: 91.72 }
+  ],
+  "Jorhat Rural": [
+    { type: "DTR", lat: 26.1, lng: 91.77 },
+    { type: "HT", lat: 26.20, lng: 91.71 },
+    { type: "LT", lat: 26.13, lng: 91.92 }
+  ],
+  "Tezpur North": [
+    { type: "DTR", lat: 26.8, lng: 91.33 },
+    { type: "HT", lat: 26.12, lng: 91.76 },
+    { type: "LT", lat: 26.11, lng: 91.55 }
+  ],
+  "Tezpur South": [
+    { type: "DTR", lat: 26.18, lng: 91.74 },
+    { type: "HT", lat: 26.19, lng: 91.75 },
+    { type: "LT", lat: 25.17, lng: 90.72 }
+  ],
+  "Nowgaon East": [
+    { type: "DTR", lat: 26.3546, lng:92.6916  },
+    { type: "HT", lat: 26.2333, lng:92.6333  },
+    { type: "LT", lat: 26.2331, lng:92.5113  }
+  ],
+  "Nowgaon West": [
+    { type: "DTR", lat: 27.18, lng: 93.74 },
+    { type: "HT", lat: 26.99, lng: 90.75 },
+    { type: "LT", lat: 25.87, lng: 90.76 }
+    ]
+  }
+  </script>
+</body>
+</html>

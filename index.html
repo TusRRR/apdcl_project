@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>APDCL Dashboard - Landing Page</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(to right, #004e92, #000428); /* Blue gradient */
+      color: #ffffff;
+    }
+
+    header {
+      background: linear-gradient(to right, #ff7e5f, #feb47b); /* Orange gradient */
+      padding: 1.5rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #fff;
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+    }
+
+    nav a {
+      color: white;
+      margin-left: 1.5rem;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .hero {
+      padding: 5rem 3rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .hero h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      max-width: 700px;
+    }
+
+    .hero .buttons {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .hero .buttons a {
+      background: linear-gradient(to right, #36d1dc, #5b86e5); /* Blue gradient */
+      padding: 0.75rem 2rem;
+      border-radius: 25px;
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .hero .buttons a:hover {
+      background: linear-gradient(to right, #5b86e5, #36d1dc);
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: #ccc;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>APDCL Power Dashboard</h1>
+    <nav>
+      <a href="#login">Login</a>
+      <a href="#signup">Sign Up</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h2>Welcome to APDCL Asset Management Portal</h2>
+    <p>Track, manage, and update all electrical assets across Assam’s subdivisions with real-time updates and map integration. Sign in to access the dashboard.</p>
+    <div class="buttons">
+      <a href="login.html">Login</a>
+      <a href="signup.html">Sign Up</a>
+      <a href="main.html">Go to Dashboard</a>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2025 Assam Power Distribution Company Limited (APDCL). All rights reserved.
+  </footer>
+</body>
+</html>

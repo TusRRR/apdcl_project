@@ -1,0 +1,142 @@
+[
+  {
+    "component": "DTR",
+    "attributes": [
+      "1111kv",
+      "DTR-12345",
+      "2021"
+    ]
+  },
+  {
+    "component": "DTR",
+    "attributes": [
+      "111kv",
+      "DTR-12345",
+      "2021"
+    ]
+  },
+  {
+    "component": "DTR",
+    "attributes": [
+      "11kv",
+      "DTR-12345",
+      "2021"
+    ]
+  },
+  {
+    "company": "APDCL",
+    "circle": "Upper Assam",
+    "district": "Jorhat",
+    "subdivision": "Jorhat Rural",
+    "component": "DTR",
+    "attributes": [
+      "11kV",
+      "DTR-12345",
+      "2021"
+    ],
+    "location": {
+      "lat": 26.7565,
+      "lng": 94.2031
+    }
+  },
+  {
+    "company": "APDCL",
+    "circle": "Upper Assam",
+    "district": "Jorhat",
+    "subdivision": "Jorhat Urban",
+    "component": "LT Overhead Line",
+    "attributes": [
+      "11kV",
+      "DTR-12345",
+      "2021"
+    ],
+    "location": {
+      "lat": 26.7565,
+      "lng": 94.2031
+    }
+  },
+  {
+    "company": "APDCL",
+    "circle": "Upper Assam",
+    "district": "Jorhat",
+    "subdivision": "Jorhat Rural",
+    "component": "LT Overhead Line",
+    "attributes": [
+      "11kV",
+      "DTR-12345",
+      "2021"
+    ],
+    "location": {
+      "lat": 26.7565,
+      "lng": 94.2031
+    }
+  },
+  {
+    "company": "APDCL",
+    "circle": "Upper Assam",
+    "district": "Jorhat",
+    "subdivision": "Jorhat Urban",
+    "component": "HT Overhead Line",
+    "attributes": [
+      "11kV",
+      "DTR-12345",
+      "2021"
+    ],
+    "location": {
+      "lat": 55.7565,
+      "lng": 95.2031
+    }
+  },
+  {
+    "company": "APDCL",
+    "circle": "Upper Assam",
+    "district": "Jorhat",
+    "subdivision": "Jorhat Rural",
+    "component": "HT Overhead Line",
+    "attributes": [
+      "11kV",
+      "DTR-12345",
+      "2021"
+    ],
+    "location": {
+      "lat": 33.7565,
+      "lng": 44.2031
+    }
+  },
+  {
+    "component": "DTR",
+    "attributes": [
+      "122kv",
+      "DTR-12345",
+      "2021"
+    ],
+    "company": "APDCL",
+    "circle": "Upper Assam",
+    "district": "Jorhat",
+    "subdivision": "Jorhat Urban"
+  },
+  {
+    "component": "DTR",
+    "attributes": [
+      "1341kV",
+      "DTR-12345",
+      "2021"
+    ],
+    "company": "APDCL",
+    "circle": "Lower Assam",
+    "district": "Guwahati",
+    "subdivision": "Guwahati Urban"
+  },
+  {
+    "component": "DTR",
+    "attributes": [
+      "1200kv",
+      "DTR-1234333",
+      "2012"
+    ],
+    "company": "APDCL",
+    "circle": "Central Assam",
+    "district": "Nowgaon",
+    "subdivision": "Nowgaon East"
+  }
+]
