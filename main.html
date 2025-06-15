@@ -259,7 +259,7 @@
       tableHeader.innerHTML = `<th>Component</th>` + attr.map(a => `<th>${a}</th>`).join('') + `<th>Action</th>`;
       
 
-      fetch(`http://localhost:3000/get-attributes?component=${component}&company=${company}&circle=${circle}&district=${district}&subdivision=${subdivision}`)
+      fetch(`http://apdcl-project-qh2n.onrender.com/get-attributes?component=${component}&company=${company}&circle=${circle}&district=${district}&subdivision=${subdivision}`)
         .then(res => res.json())
         .then(data => {
           const values = data.attributes.length ? data.attributes : defaultValues[component];
@@ -354,7 +354,7 @@ function closeMap() {
         const subdivision = document.getElementById('subdivision').value;
         const attributes = Array.from(inputs).map(input => input.value);
 
-        fetch('http://localhost:3000/save-attributes', {
+        fetch('http://apdcl-project-qh2n.onrender.com/save-attributes', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
