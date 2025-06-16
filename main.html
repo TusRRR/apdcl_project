@@ -259,7 +259,7 @@
       tableHeader.innerHTML = `<th>Component</th>` + attr.map(a => `<th>${a}</th>`).join('') + `<th>Action</th>`;
       
 
-      fetch(`https://apdcl-project-qh2n.onrender.com /get-attributes?component=${component}&company=${company}&circle=${circle}&district=${district}&subdivision=${subdivision}`)
+      fetch(`https://apdcl-project-qh2n.onrender.com/get-attributes?component=${component}&company=${company}&circle=${circle}&district=${district}&subdivision=${subdivision}`)
         .then(res => res.json())
         .then(data => {
           const values = data.attributes.length ? data.attributes : defaultValues[component];
